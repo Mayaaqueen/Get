@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Token Dashboard - DATWORLD</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f9f9f9; }
+    .header, .filter-section, .token-list, .footer { padding: 10px; }
+    .header { background-color: #e0e0e0; display: flex; justify-content: space-between; align-items: center; }
+    .logo-container { background: #1a3c5e; color: white; padding: 5px 10px; border-radius: 5px; font-size: 30px; font-weight: bold; }
+    .search-bar input { padding: 8px; width: 100%; border-radius: 5px; border: 1px solid #ccc; }
+    .token-item { background: white; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 10px; padding: 10px; display: flex; align-items: center; text-decoration: none; color: inherit; }
+    .letter { font-weight: bold; font-size: 24px; margin-right: 10px; background: #f0f0f0; width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; border-radius: 5px; }
+    .details { flex: 1; }
+    .time-ago { color: #666; font-size: 12px; }
+    .pagination { display: flex; justify-content: center; gap: 10px; margin-top: 20px; }
+    .pagination button { padding: 8px 16px; background: #1a3c5e; color: white; border: none; border-radius: 5px; cursor: pointer; }
+    .footer { text-align: center; font-size: 14px; margin-top: 30px; }
+    .footer a { text-decoration: none; color: #1a3c5e; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="logo-container">∈ Dat</div>
+  </div>
+
+  <div class="search-bar">
+    <input type="text" id="search" placeholder="Search by name or address..." />
+  </div>
+
+  <div class="token-list" id="tokenList">Loading...</div>
+
+  <div class="pagination" id="pagination" style="display:none;">
+    <button id="prev">Previous</button>
+    <button id="next">Next</button>
+  </div>
+
+  <div class="footer">
+    View the creator profile at <a href="https://warpcast.com/datworld" target="_blank">warpcast.com/datworld</a>
+  </div>
+
+  <script>
+    let tokens = [], currentPage = 1, filtered = [];
+
+    const PER_PAGE = 10;
+    const list = document.getElementById("tokenList");
+    const searchInput = document.getElementById("search");
+
+    const renderTokens = () => {
+      list.innerHTML = "";
+      const start = (currentPage - 1) * PER_PAGE;
+      const pageData = filtered.slice(start, start + PER_PAGE);
+      pageData.forEach(t => {
+        const shortAddr = t.address.slice(0, 6) + "___" + t.address.slice(-4);
+        const ago = Math.floor((Date.now() / 1000 - t.timestamp) / 60);
+        const timeText = ago < 1 ? "just now" : ago < 60 ? `${ago} MINUTES AGO` : `${Math.floor(ago / 60)} HOURS AGO`;
+
+        const el = document.createElement("a");
+        el.href = `token.html?address=${t.address}`;
+        el.className = "token-item";
+        el.innerHTML = `
+          <div class="letter">${t.symbol[0]}</div>
+          <div class="details">
+            <div class="token-name">${t.name} $${t.symbol}</div>
+            <div>@${t.username || "unknown"}</div>
+            <div>${shortAddr}</div>
+            <div class="time-ago">${timeText}</div>
+          </div>`;
+        list.appendChild(el);
+      });
+
+      document.getElementById("pagination").style.display = filtered.length > PER_PAGE ? "flex" : "none";
+    };
+
+    const filterTokens = () => {
+      const q = searchInput.value.toLowerCase();
+      filtered = tokens.filter(t => t.name.toLowerCase().includes(q) || t.address.toLowerCase().includes(q));
+      currentPage = 1;
+      renderTokens();
+    };
+
+    document.getElementById("prev").onclick = () => {
+      if (currentPage > 1) {
+        currentPage--;
+        renderTokens();
+      }
+    };
+
+    document.getElementById("next").onclick = () => {
+      if (currentPage * PER_PAGE < filtered.length) {
+        currentPage++;
+        renderTokens();
+      }
+    };
+
+    searchInput.oninput = filterTokens;
+
+    fetch("http://68.183.229.2:3000/tokens.json")
+      .then(res => res.json())
+      .then(data => {
+        tokens = data;
+        filtered = data;
+        renderTokens();
+      });
+  </script>
+</body>
+</html>
