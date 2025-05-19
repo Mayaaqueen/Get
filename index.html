@@ -96,7 +96,7 @@
 
     searchInput.oninput = filterTokens;
 
-    fetch("http://68.183.229.2:3000/tokens.json")
+    fetch("/api/tokens")
       .then(res => res.json())
       .then(data => {
         tokens = data;
