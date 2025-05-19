@@ -95,7 +95,7 @@
       render();
     };
 
-    fetch("https://your-vps.com/tokens.json")
+    fetch("/api/tokens")
       .then(res => res.json())
       .then(data => {
         tokens = data;
