@@ -41,7 +41,7 @@
   <script>
     const addr = new URLSearchParams(window.location.search).get("address");
 
-    fetch("https://your-vps.com/tokens.json")
+    fetch("/api/tokens")
       .then(res => res.json())
       .then(tokens => {
         const token = tokens.find(t => t.address.toLowerCase() === addr.toLowerCase());
