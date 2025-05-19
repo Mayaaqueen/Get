@@ -1,11 +1,31 @@
 {
-  "buildCommand": "npm run build",
-  "outputDirectory": "dist",
-  "framework": "vite",
-  "rewrites": [
+  "version": 2,
+  "builds": [
     {
-      "source": "/token/:address",
-      "destination": "/token.html"
+      "src": "api/tokens.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "index.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "token.html",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/tokens",
+      "dest": "/api/tokens.js"
+    },
+    {
+      "src": "/token",
+      "dest": "/token.html"
+    },
+    {
+      "src": "/",
+      "dest": "/index.html"
     }
   ]
 }
