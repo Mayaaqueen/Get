@@ -41,7 +41,7 @@
   <script>
     const addr = new URLSearchParams(window.location.search).get("address");
 
-    fetch("/api/tokens")
+    fetch("https://api.datworld.fun/tokens.json")
       .then(res => res.json())
       .then(tokens => {
         const token = tokens.find(t => t.address.toLowerCase() === addr.toLowerCase());
