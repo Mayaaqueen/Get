@@ -1,31 +1,9 @@
 {
-  "version": 2,
-  "builds": [
+  "redirects": [
     {
-      "src": "api/tokens.js",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "index.html",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "token.html",
-      "use": "@vercel/static"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/api/tokens",
-      "dest": "/api/tokens.js"
-    },
-    {
-      "src": "/token",
-      "dest": "/token.html"
-    },
-    {
-      "src": "/",
-      "dest": "/index.html"
+      "source": "/(.*)",
+      "destination": "https://app.datworld.fun/$1",
+      "permanent": true
     }
   ]
 }
